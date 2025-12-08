@@ -19,4 +19,4 @@ dependencies:
   - pip
   - pip:
       - elevation
-      - terrainshader
+ #     - terrainshader, This caused a pip error, rm for ease

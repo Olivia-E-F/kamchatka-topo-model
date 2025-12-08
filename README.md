@@ -17,7 +17,8 @@ The final outputs include:
 Believe it or not, this volcano-ridden tundra is my birthplace. It’s a fun fact that always surprises people, and it inspired me to take on a project that blends geospatial data, Python, and 3D printing to recreate this terrain in high resolution. Once the model is printed, I plan to hand-paint it to add visual depth, highlight elevation features, and bring the landscape to life.
 
 ## Tile Layout (2×2 Grid)
-[ tile_1 (NW) | tile_2 (NE) ]
+[ tile_1 (NW) | tile_2 (NE) ]/
+
 [ tile_3 (SW) | tile_4 (SE) ]
 
 Each tile is sized to fit within the build volume of printers such as the Prusa MK4 and includes:
