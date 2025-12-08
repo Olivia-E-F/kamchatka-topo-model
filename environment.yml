@@ -1,0 +1,22 @@
+name: kamchatka
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - scipy
+  - pandas
+  - rasterio
+  - gdal
+  - pyproj
+  - shapely
+  - pillow
+  - matplotlib
+  - tqdm
+  - rich
+  - trimesh
+  - meshio
+  - pip
+  - pip:
+      - elevation
+      - terrainshader
