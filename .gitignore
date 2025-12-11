@@ -13,6 +13,7 @@ env/
 data/raw/*
 data/processed/*
 data/temp/*
+data/osm/
 
 # Output files (not tracked by Git)
 output/stl/*
