@@ -13,7 +13,8 @@ env/
 data/raw/*
 data/processed/*
 data/temp/*
-data/osm/
+data/osm/*
+!data/osm/README.md
 
 # Output files (not tracked by Git)
 output/stl/*

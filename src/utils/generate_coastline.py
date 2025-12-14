@@ -3,60 +3,78 @@ from shapely.geometry import Polygon
 import shapely
 import os
 
-## Config ##
+# --------------------------------------------------
+# Config
+# --------------------------------------------------
 
-# Path to OSM land Polygons
+# Global OSM land polygons (authoritative land / ocean boundary)
 OSM_LAND_PATH = "data/osm/land-polygons-complete-4326/land_polygons.shp"
 
-# Rough region of interest (as defined in research) polygon
+# Rough region-of-interest polygon defining Kamchatka + Koryak extent
+# Used only as a spatial cutter, not as a final boundary
 ROI_PATH = "data/rough_roi.geojson"
 
+# Output coastline polygon for downstream DEM masking and STL generation
 OUTPUT_PATH = "data/kamchatka_coastline.geojson"
 
-# Simplification tolerance (deg.) for med.-res. ouput (R2)
-# ~0.01 degrees ~ 1km
-SIMPLIFY_TOLERANCE = 0.01 # ** Alter for Later
+# Geometry simplification tolerance (meters)
+# Chosen to remove sub-print-scale coastline noise while preserving major features
+SIMPLIFY_TOLERANCE = 500
 
-## Loading Data 
 
-print("Loading OSM Coastline Polygons :) :) :)")
-land = gdp.read_file(OSM_LAND_PATH)
+# --------------------------------------------------
+# Load source geometries
+# --------------------------------------------------
 
-print("Loading rough ROI polygon :) :) :)")
-roi = gdp.read_file(ROI_PATH)
+land = gpd.read_file(OSM_LAND_PATH)
+roi  = gpd.read_file(ROI_PATH)
 
-# Ensuring both layers use the same CRS (WGS84)
+
+# --------------------------------------------------
+# Topological alignment phase
+# Purpose: ensure valid geometric operations (not distance measurement)
+# --------------------------------------------------
+
+# Reproject both layers into a common geographic CRS so polygon intersection is valid
 land = land.to_crs("EPSG:4326")
-roi = roi.to_crs("ESPG:4326")
+roi  = roi.to_crs("EPSG:4326")
 
 
-## Clip Coastline with ROI
+# --------------------------------------------------
+# Coastline extraction
+# Purpose: physically cut global land polygons to the Kamchatka region
+# --------------------------------------------------
 
-print("Clipping land polygons to ROI :) :) :)")
-clipped = gpd.overlay(land, roi, how="intersection") # **
+# Use polygon intersection (not bounding box or spatial filtering)
+# This trims land geometry exactly to the ROI boundary and preserves coastline shape
+clipped = gpd.overlay(land, roi, how="intersection")
 
-# Clipping could yield multiple features, dissolve into a single geometry. 
-print("Dissolving clipped polygons :) :) :)")
+# Intersection yields many fragmented features; dissolve into a single landmass polygon
 clipped = clipped.dissolve()
 
-## Optimal Geometry Simplification
 
-print("simplifying coastline :) :) :)")
+# --------------------------------------------------
+# Metric processing phase
+# Purpose: distance-aware simplification and raster compatibility
+# --------------------------------------------------
+
+# Reproject into a metric CRS so simplification tolerance corresponds to real distances
+# UTM Zone 57N is appropriate for Kamchatka
+clipped = clipped.to_crs("EPSG:32657")
+
+# Simplify coastline geometry while preserving topological validity
 clipped["geometry"] = clipped["geometry"].simplify(
-    SIMPLIFY_TOLERANCE, preserve_topology = True
+    SIMPLIFY_TOLERANCE,
+    preserve_topology=True
 )
 
-# Fix Geometry if needed
-
-# Shapely buffer(0) is a classic fix for invalid geometrics
-print("Validating geometry :) :) :)")
-
+# Repair any minor invalid geometry introduced by simplification
 clipped["geometry"] = clipped["geometry"].buffer(0)
 
-# Save Output
 
-print(f"Saving final coastline to {OUTPUT_PATH} :) :) :)")
+# --------------------------------------------------
+# Export
+# --------------------------------------------------
+
 clipped.to_file(OUTPUT_PATH, driver="GeoJSON")
-
-print("Done  :) Coastline Exported!")
-
+print(f"Exported coastline to {OUTPUT_PATH}")
