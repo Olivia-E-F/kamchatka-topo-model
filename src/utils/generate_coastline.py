@@ -8,14 +8,14 @@ import os
 # --------------------------------------------------
 
 # Global OSM land polygons (authoritative land / ocean boundary)
-OSM_LAND_PATH = "data/osm/land-polygons-complete-4326/land_polygons.shp"
+OSM_LAND_PATH = "data/source/osm/land-polygons-complete-4326/land_polygons.shp"
 
 # Rough region-of-interest polygon defining Kamchatka + Koryak extent
 # Used only as a spatial cutter, not as a final boundary
-ROI_PATH = "data/rough_roi.geojson"
+ROI_PATH = "data/vector/rough_roi.geojson"
 
 # Output coastline polygon for downstream DEM masking and STL generation
-OUTPUT_PATH = "data/kamchatka_coastline.geojson"
+OUTPUT_PATH = "data/vector/kamchatka_coastline.geojson"
 
 # Geometry simplification tolerance (meters)
 # Chosen to remove sub-print-scale coastline noise while preserving major features
