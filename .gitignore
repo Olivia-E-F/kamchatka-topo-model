@@ -9,16 +9,20 @@ venv/
 env/
 .venv/
 
-# Data
-data/raw/*
-data/processed/*
-data/temp/*
+# Data (generated / intermediate)
+data/raw/
+data/processed/
+data/temp/
+data/raster/
+data/source/dem/*.tif
+
+# OSM (keep docs only)
 data/osm/*
 !data/osm/README.md
 
-# Output files (not tracked by Git)
-output/stl/*
-output/png/*
+# Output files
+output/stl/
+output/png/
 
 # macOS
 .DS_Store
